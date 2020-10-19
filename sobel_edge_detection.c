@@ -47,8 +47,8 @@ void read_comments(FILE *input_image) {
 
 void read_pgm_file(char* dir, pgm* image) {
 	FILE* input_image; 
-	int ch;
-	int i, j;
+	char ch;
+	int i, j, num;
 
 	input_image = fopen(dir, "r");
 	if (input_image == NULL) {
@@ -65,14 +65,23 @@ void read_pgm_file(char* dir, pgm* image) {
 	for(i = 0; i < image->width; i++) {
 		image->imageData[i] = calloc(image->height, sizeof(int));
 	}
-	
-	for (i = 0; i < image->height; i++) {
-		for (j = 0; j < image->width; j++) {
-			fscanf(input_image, "%d", &ch);
-			image->imageData[j][i] = ch;
-		}
+	if (strcmp(image->version, "P2") == 0) {
+		for (i = 0; i < image->height; i++) {
+			for (j = 0; j < image->width; j++) {
+				fscanf(input_image, "%d", &num);
+				image->imageData[j][i] = num;
+			}
+		}	
 	}
-	
+	else if (strcmp(image->version, "P5") == 0) {
+		for (i = 0; i < image->height; i++) {
+			for (j = 0; j < image->width; j++) {
+                ch = fgetc(input_image);
+                image->imageData[j][i] = ch;
+            }
+        }
+	}
+	printf("_______________IMAGE INFO__________________\n");
 	printf("Version: %s \nWidth: %d \nHeight: %d \nMaximum Gray Level: %d \n", image->version, image->width, image->height, image->maxGrayLevel);
 
 }
@@ -110,60 +119,54 @@ void sobel_edge_detector(pgm* image, pgm* out_image) {
 	
 }
 
-void min_max_normalization(pgm* image) {
-	int min = 0, max = 255, i, j;
-	
-	for(i = 0; i < image->width; i++) {
-		for(j = 0; j < image->height; j++) {
-			image->imageData[i][j] = (image->imageData[i][j] - min) / (max - min);
-		}
-	}
-}
-
-void write_pgm_file(pgm* image) { //char dir[50]
+void write_pgm_file(pgm* image, char* dir) {
 	FILE* out_image;
 	int i, j, count = 0;
-	/*char* token = strtok(dir, ".");
+	
+	char* token = strtok(dir, ".");
 	if (token != NULL) {
 		strcat(token, "_output.pgm");
 		out_image = fopen(token, "wb");
-
-	}*/
+	}
 	
-	out_image = fopen("C:/Users/fzehr/Desktop/input ve outputlar/casablanca_output.pgm", "wb");
+	out_image = fopen(dir, "wb");
 	fprintf(out_image, "%s\n", image->version);
 	fprintf(out_image, "%d %d\n", image->width, image->height);
 	fprintf(out_image, "%d\n", image->maxGrayLevel);
-	for(i = 0; i < image->height; i++) {
-		for(j = 0; j < image->width; j++) {
-			fprintf(out_image,"%d", image->imageData[j][i]);
-			if (count % 17 == 0) 
-				fprintf(out_image,"\n");
-			else 
-				fprintf(out_image," ");
-			count ++;
-
-		}
+	
+	if (strcmp(image->version, "P2") == 0) {
+		for(i = 0; i < image->height; i++) {
+			for(j = 0; j < image->width; j++) {
+				fprintf(out_image,"%d", image->imageData[j][i]);
+				if (count % 17 == 0) 
+					fprintf(out_image,"\n");
+				else 
+					fprintf(out_image," ");
+				count ++;
+			}
+		} printf("\nImage saved in %s \n", token);
+	}
+	else if (strcmp(image->version, "P5") == 0) {
+		for(i = 0; i < image->height; i++) {
+			for(j = 0; j < image->width; j++) {
+				char num = image->imageData[j][i] & 0xFF;
+				fprintf(out_image,"%c", num);
+			}
+		} printf("\nImage saved in %s \n", token);
 	}
 }
 
 int main(int argc, char **argv)
 {
-	char dir[100] = "C:/Users/fzehr/Desktop/input ve outputlar/casablanca.ascii.pgm";
 	pgm image, out_image;
-	
+	char dir[100] = "C:/Users/fzehr/Desktop/dla.ascii.pgm";
 	/*printf("Enter the file name: ");
 	scanf("%s", dir);*/
-
+	
 	read_pgm_file(dir, &image);
 	init_out_image(&out_image, image);
-	sobel_edge_detector(&image, &out_image);
-	//min_max_normalization(&out_image);
-	
-	write_pgm_file(&out_image);
-	//write_pgm_file(&out_image, dir);
-
-	
+	sobel_edge_detector(&image, &out_image);	
+	write_pgm_file(&out_image, dir);
 	
 	return 0;
 }
