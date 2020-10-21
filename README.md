@@ -5,20 +5,20 @@ Github readme can't show the pgm images so i converted pgm to jpg for sampling.
 
 ## Input Image
 <p align="center">
-  <img width="60%" src="lena.JPG">
+  <img width="40%" src="lena.JPG">
 </p>
 
 ## Gradient X
 <p align="center">
-  <img width="60%" src="lena_GX.JPG">
+  <img width="40%" src="lena_GX.JPG">
 </p>
 
 ## Gradient Y
 <p align="center">
-  <img width="60%" src="lena_GY.JPG">
+  <img width="40%" src="lena_GY.JPG">
 </p>
 
 ## Gradient 
 <p align="center">
-  <img width="60%" src="lena_G.JPG">
+  <img width="40%" src="lena_G.JPG">
 </p>
