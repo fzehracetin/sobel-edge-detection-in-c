@@ -182,17 +182,10 @@ void write_pgm_file(pgm* image, char dir[], int** matrix, char name[]) {
 	FILE* out_image;
 	int i, j, count = 0;
 	
-	char* token = strtok(dir, "_");
+	char* token = strtok(dir, ".");
 	if (token != NULL) {
 		strcat(token, name);
 		out_image = fopen(token, "wb");
-	}
-	else {
-		token = strtok(dir, ".");
-		if (token != NULL) {
-			strcat(token, name);
-			out_image = fopen(token, "wb");
-		}
 	}
 	
 	out_image = fopen(dir, "wb");
@@ -210,7 +203,7 @@ void write_pgm_file(pgm* image, char dir[], int** matrix, char name[]) {
 					fprintf(out_image," ");
 				count ++;
 			}
-		} printf("\nImage saved in %s \n", token);
+		} 
 	}
 	else if (strcmp(image->version, "P5") == 0) {
 		for(i = 0; i < image->height; i++) {
@@ -218,19 +211,18 @@ void write_pgm_file(pgm* image, char dir[], int** matrix, char name[]) {
 				char num = matrix[i][j];
 				fprintf(out_image,"%c", num);
 			}
-		} printf("\nImage saved in %s \n", token);
-	} printf("\n");
-	
+		} 
+	} 
 	fclose(out_image);
 }
 
 int main(int argc, char **argv)
 {
 	pgm image, out_image;
-	char dir[150] = "C:/Users/fzehr/Desktop/brain.ascii.pgm";
-	/*char dir[100];
+	//char dir[150] = "C:/Users/fzehr/Desktop/dragon.ascii.pgm";
+	char dir[200];
 	printf("Enter the file name: ");
-	scanf("%s", dir);*/
+	scanf("%s", dir);
 	
 	read_pgm_file(dir, &image);
 	padding(&image);
@@ -241,11 +233,12 @@ int main(int argc, char **argv)
 	min_max_normalization(&out_image, out_image.gx);
 	min_max_normalization(&out_image, out_image.gy);
 
-	write_pgm_file(&out_image, dir, out_image.imageData, "_G.pgm");
-	printf("%s ", dir);
-	write_pgm_file(&out_image, dir, out_image.gx, "_GX.pgm");
-	printf("%s ", dir);
-	write_pgm_file(&out_image, dir, out_image.gy, "_GY.pgm");
+	write_pgm_file(&out_image, dir, out_image.imageData, ".G.pgm");
+	printf("\nGradient saved: %s \n", dir);
+	write_pgm_file(&out_image, dir, out_image.gx, ".GX.pgm");
+	printf("Gradient X saved: %s \n", dir);
+	write_pgm_file(&out_image, dir, out_image.gy, ".GY.pgm");
+	printf("Gradient Y saved: %s \n", dir);
 
 	free(image.imageData);
 	free(out_image.imageData);
