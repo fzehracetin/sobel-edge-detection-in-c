@@ -3,6 +3,8 @@
 #include <math.h>
 #include <string.h>
 
+int isspace(int argument);
+
 typedef struct {
 	char version[3]; 
 	int width;
@@ -48,7 +50,7 @@ void read_comments(FILE *input_image) {
 	char ch;
 	char line[100];
 
-	while ((ch = fgetc(input_image)) != EOF && ch == '\n') {
+	while ((ch = fgetc(input_image)) != EOF && (isspace(ch)))  {
 		;
     }
 	if (ch == '#') {
@@ -63,7 +65,7 @@ void read_pgm_file(char* dir, pgm* image) {
 	FILE* input_image; 
 	int i, j, num;
 
-	input_image = fopen(dir, "r");
+	input_image = fopen(dir, "rb");
 	if (input_image == NULL) {
 		printf("File could not opened!");
 		return;
@@ -219,7 +221,6 @@ void write_pgm_file(pgm* image, char dir[], int** matrix, char name[]) {
 int main(int argc, char **argv)
 {
 	pgm image, out_image;
-	//char dir[150] = "C:/Users/fzehr/Desktop/dragon.ascii.pgm";
 	char dir[200];
 	printf("Enter the file name: ");
 	scanf("%s", dir);
